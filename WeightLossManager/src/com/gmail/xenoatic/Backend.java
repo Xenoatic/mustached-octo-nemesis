@@ -21,6 +21,7 @@ public class Backend {
 	 */
 	public Backend(String fileLocation) {
 		this.ourFile  = new File(fileLocation);
+		System.out.println("IHATEYOU");
 	}
 	
 	/**
