@@ -1,34 +1,34 @@
 package com.gmail.xenoatic;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
-
+/** Main GUI part of the application
+ *  Does have some actual code
+ * @author Josh
+ *
+ */
 public class WeightLossManager extends JFrame {
 
 	private static final long serialVersionUID = -8875629257421445617L;
@@ -36,19 +36,14 @@ public class WeightLossManager extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JFreeChart chart;
-	private ChartPanel chartPanel;
 	
-	private String fileLocation = "C:/InputOutput.txt";
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {}
+	private String fileLocation = "C:/InputOutput.txt"; //TODO needs to be user selectable
 
 	/**
 	 * Create the frame.
+	 * @throws IOException 
 	 */
-	public WeightLossManager() {
+	public WeightLossManager() throws IOException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 483, 457);
 		contentPane = new JPanel();
@@ -75,9 +70,10 @@ public class WeightLossManager extends JFrame {
 		
 		
 		//table/graph TODO THIS SUCKS
-		final XYDataset dataset = createDataset();
+		Backend b = new Backend(this.fileLocation);
+		XYDataset dataset = b.getDataset();
 		chart = createChart(dataset);
-		final ChartPanel chartPanel = new ChartPanel(chart);
+		 ChartPanel chartPanel = new ChartPanel(chart);
 		panel.add(chartPanel, java.awt.BorderLayout.CENTER);
 		panel.validate();
 		
@@ -97,8 +93,6 @@ public class WeightLossManager extends JFrame {
 				
 				//weight in the textbox
 				double weight = 0;
-				
-		        System.out.print("Insert your Weight! \n");
 		        //this is making sure a double was inserted
 		        try{
 		        	
@@ -115,40 +109,18 @@ public class WeightLossManager extends JFrame {
 					e1.printStackTrace();
 				}
 				
-				JOptionPane.showMessageDialog(null, "You pressed the button!"); //TODO delete
 			}
 		});
-		
-		
-
-		
 	}
-	
-	/**For creating the testdataset
+
+	/**TODO this needs to go into backend
+	 * @param dataset dataset for the chart
 	 * @return
 	 */
-	private XYDataset createDataset() {
+	private JFreeChart createChart(XYDataset dataset) {
 		
-        final XYSeries series1 = new XYSeries("weight");
-        series1.add(1, 282);
-        series1.add(2, 280);
-        series1.add(3, 270);
-        series1.add(4, 275);
-        series1.add(5.0, 270);
-        series1.add(6.0, 250);
-        series1.add(7.0, 240);
-        series1.add(8.0, 260);
-        
-        final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series1);
-		
-		return dataset;
-	}
-	
-	private JFreeChart createChart(final XYDataset dataset) {
-		
-		//creating the chart
-		final JFreeChart chart = ChartFactory.createXYLineChart(
+		//creating the chart //TODO http://stackoverflow.com/questions/21503426/jfreechart-date-axis-formatting-issue
+		JFreeChart chart = ChartFactory.createXYLineChart(
 				"Weight over time",              //title of the chart
 				"Date",                        // x axis label
 				"Weight",                        // y axis label
@@ -163,13 +135,13 @@ public class WeightLossManager extends JFrame {
 		chart.setBackgroundPaint(Color.white); //background of box
 		
 		//get a reference to the plot for further customization...
-        final XYPlot plot = chart.getXYPlot();
+        XYPlot plot = chart.getXYPlot();
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         
         //this connects the lines on the chart
-        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         //this changes the color of the plots
         renderer.setSeriesPaint(0, Color.BLACK);
         //this connects the lines
@@ -177,12 +149,14 @@ public class WeightLossManager extends JFrame {
 
         plot.setRenderer(renderer);
         
-        // changing the auto tick unit selection to interger units only
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        //rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        // changes the rangeAxis (y axis duh) to start at 150 instead of 0
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setAutoRangeIncludesZero(false);
         rangeAxis.setAutoRangeMinimumSize(150);
         
+        // changes the DomainAxis (x axis duh) to display as simpledateformat
+        DateAxis domainAxis = (DateAxis) plot.getDomainAxis();
+        domainAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
         //end of optional customization
 	
 		return chart;

@@ -68,8 +68,6 @@ public class Backend {
 		 while((curLine = reader.readLine()) != null) {
 			//then split the file by : and remove spaces (somesorta delimiation)
 			 spLine = curLine.split(" : ");
-			 System.out.println(curLine); //TODO delete
-			 System.out.println(spLine[0] + "," + spLine[1]);
 			 
 			 //TODO needs to parse String into a number and make sure it's a number
 			 //without crashing
@@ -87,6 +85,8 @@ public class Backend {
         
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(series1);
+        
+        //TODO Check the dates of the datasets
         
         //close reader
         reader.close();
