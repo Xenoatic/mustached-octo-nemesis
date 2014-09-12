@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,28 +21,6 @@ public class Backend {
 	 */
 	public Backend(String fileLocation) {
 		this.ourFile  = new File(fileLocation);
-	}
-
-	
-	/**
-	 * This method asks the user for his current weight
-	 * @return user's current weight
-	 */
-	private double userInput() throws IOException {
-		//this is the value of the users current weight
-		double weight = 0;
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		//restarts the loop if user entered a invalid string
-	        System.out.print("Insert your Weight! \n");
-	        //this is making sure a double was inserted
-	        try{
-	        	weight = Double.parseDouble(br.readLine());
-	        }catch(NumberFormatException nfe){
-	            System.out.println("You didn't enter a number!");
-	        
-		}
-		return weight;
 	}
 	
 	/**
@@ -79,32 +56,5 @@ public class Backend {
 		br.close();
 		out.close();
 	}
-	
-	
-	/**
-	 * For testing purposes
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String args[]) throws IOException  {
-		double weight; //users weight
-		
-		//creating an instance of this program
-		Backend backend = new Backend("C:/InputOutput.txt");
-		//asking for user input
-		weight = backend.userInput();
-		System.out.println("Your weight is: " + weight);
-		
-		//do fileinput/output
-		//backend.fileIO(ourFile, weight);
-		
-		//TODO count the length of the file and then deconstruct it for use by
-		//TODO the graphing tool.
-		
-		
-		
-
-	}
-	
-	
 }
+
